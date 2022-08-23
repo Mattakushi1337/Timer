@@ -1,8 +1,14 @@
 import schedule from 'node-schedule'
 
 
-export const planStartGame = async (time) => {
-    console.log('Game planned at ' + time)
+export const planStartGame = async () => {
+    var secondToAddStart = 4
+    var currentDate = new Date()
+    var futureDateForStart = (currentDate.getTime() + secondToAddStart * 1000)
+    console.log(currentDate);
+    console.log(Date.now());
+    console.log(futureDateForStart);
+    console.log('Game planned at ' + cronTasks(futureDateForStart))
 }
 
 
@@ -21,19 +27,8 @@ export const getCurrentTimerOfGame = async (gameId) => {
 }
 
 
-export const cronTasks = async () => {
-    var seondsToAddForStart = 60
-    var currentDate = new Date()
-    var futureDateForStart = (currentDate.getTime() + seondsToAddForStart * 1000)
+export const cronTasks = async (futureDate) => {
 
-    schedule.scheduleJob(futureDateForStart, function () {
-        planStartGame(Date.now());
-    });
-
-    var minutesToAddForEnd = 6
-    var futureDateForEnd = (currentDate.getTime() + minutesToAddForEnd * 60000)
-
-    schedule.scheduleJob(futureDateForEnd, function () {
-        planEndGame(Date.now())
+    schedule.scheduleJob(futureDate, function () {
     })
 }

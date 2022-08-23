@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
 
 import { startGame } from './modules/game.module.js';
 import { makeMove, thinkAboutAMove } from './modules/player.module.js';
-import { cronTasks } from './modules/timer.module.js';
+import { cronTasks, planStartGame } from './modules/timer.module.js';
 
 
 // https://metanit.com/web/nodejs/2.9.php
@@ -39,7 +39,7 @@ server.listen(port, hostname, async () => {
 
 
 
-    await cronTasks();
+    planStartGame(89)
     // Устанавливается начало игры
 
     // Установить чья очередь
