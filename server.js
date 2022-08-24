@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
 
 import { startGame } from './modules/game.module.js';
 import { makeMove, thinkAboutAMove } from './modules/player.module.js';
-import { createCronTask, fromCurrentTime, planEndGame, planStartGame } from './modules/timer.module.js';
+import { createCronTask, fromCurrentTime, getCurrentTimerOfPlayer, planEndGame, planStartGame } from './modules/timer.module.js';
 
 
 // https://metanit.com/web/nodejs/2.9.php
@@ -34,10 +34,6 @@ import { emitter } from "./emmiter.js";
 
 server.listen(port, hostname, async () => {
 
-
-
-
-
     // const startDate = await fromCurrentTime(10);
     // const nextStartDate = await fromCurrentTime(15);
 
@@ -48,13 +44,20 @@ server.listen(port, hostname, async () => {
 
     // await createCronTask("50", nextStartDate);
 
-    const timeForStartGame = await fromCurrentTime(30);
 
-    await planStartGame(timeForStartGame);
+    const timeForStartGame = fromCurrentTime(30);
+
+    await startGame(timeForStartGame);
+
+    const timeForTurn = 20
+
+    const timeForMove = fromCurrentTime(timeForTurn)
+
+    await thinkAboutAMove(timeForMove)
 
     const timeForPlay = 60;
 
-    const timeForEndGame = await fromCurrentTime(timeForPlay);
+    const timeForEndGame = fromCurrentTime(timeForPlay);
 
 
     await planEndGame(timeForEndGame);
@@ -68,6 +71,14 @@ server.listen(port, hostname, async () => {
 
     emitter.on('game:start', function (data) {
         console.log("Game started!", data);
+    });
+
+    emitter.on('player1:move', function (data) {
+        console.log("Player 1, ur turn!", data);
+    });
+
+    emitter.on('player2:move', function (data) {
+        console.log("Player 2, ur turn!", data);
     });
 
     emitter.on('game:end', function (data) {

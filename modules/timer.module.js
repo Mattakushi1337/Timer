@@ -11,17 +11,12 @@ export const fromCurrentTime = (timeShiftSeconds) => {
 
 
 export const planStartGame = async (timeToStart) => {
-
-
     await createCronTask('123', timeToStart, "game:start");
-
-
 };
 
 
 export const planEndGame = async (timeToEnd) => {
     await createCronTask('456', timeToEnd, "game:end");
-
 };
 
 
@@ -55,8 +50,6 @@ export const createCronTask = async (taskId, whenToExecute, action) => {
         });
 
         console.log(currentTask);
-
-
 
 
         emitter.emit(currentTask.action, { test: 'Hello world' });
