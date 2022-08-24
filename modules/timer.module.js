@@ -1,31 +1,68 @@
-import schedule from 'node-schedule'
+import schedule from 'node-schedule';
+
+import { emitter } from "../emmiter.js";
 
 
-export const planStartGame = async (secondToAddStart) => {
-    var currentDate = new Date()
-    var futureDateForStart = (currentDate.getTime() + secondToAddStart * 1000)
-    console.log(currentDate);
-    console.log(Date.now());
-    console.log('Game planned at ' + cronTasks(futureDateForStart))
-}
+export const fromCurrentTime = (timeShiftSeconds) => {
+
+    return (new Date().getTime() + timeShiftSeconds * 1000);
+};
 
 
-export const planEndGame = async (time) => {
-    console.log('Game ended at ' + time)
-}
+
+export const planStartGame = async (timeToStart) => {
+
+
+    await createCronTask('123', timeToStart, "game:start");
+
+
+};
+
+
+export const planEndGame = async (timeToEnd) => {
+    await createCronTask('456', timeToEnd, "game:end");
+
+};
 
 
 export const getCurrentTimerOfPlayer = async (playerId) => {
 
-}
+};
 
 
 export const getCurrentTimerOfGame = async (gameId) => {
 
-}
+};
 
 
-export const cronTasks = async (futureDate) => {
-    return schedule.scheduleJob(futureDate, function () {
-    })
-}
+
+let tasks = [];
+
+export const createCronTask = async (taskId, whenToExecute, action) => {
+
+
+
+    tasks.push({
+        taskId, whenToExecute, action
+    });
+
+    let job = schedule.scheduleJob(taskId, whenToExecute, function () {
+        console.log('running campaign: ' + taskId);
+
+
+        const currentTask = tasks.find(item => {
+            return item.taskId === taskId;
+        });
+
+        console.log(currentTask);
+
+
+
+
+        emitter.emit(currentTask.action, { test: 'Hello world' });
+    });
+
+    console.log(tasks);
+
+    return job;
+};

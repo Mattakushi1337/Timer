@@ -13,16 +13,13 @@ const server = http.createServer((req, res) => {
 
 import { startGame } from './modules/game.module.js';
 import { makeMove, thinkAboutAMove } from './modules/player.module.js';
-import { cronTasks, planStartGame } from './modules/timer.module.js';
+import { createCronTask, fromCurrentTime, planEndGame, planStartGame } from './modules/timer.module.js';
 
 
 // https://metanit.com/web/nodejs/2.9.php
 
 
-import Emitter from 'events';
-
-
-let emitter = new Emitter();
+import { emitter } from "./emmiter.js";
 
 // На игру дается 5 минут
 // Игра стартует от сервера
@@ -39,7 +36,48 @@ server.listen(port, hostname, async () => {
 
 
 
-    planStartGame(8)
+
+
+    // const startDate = await fromCurrentTime(10);
+    // const nextStartDate = await fromCurrentTime(15);
+
+    // console.log(startDate);
+
+
+    // await createCronTask("13", startDate);
+
+    // await createCronTask("50", nextStartDate);
+
+    const timeForStartGame = await fromCurrentTime(30);
+
+    await planStartGame(timeForStartGame);
+
+    const timeForPlay = 60;
+
+    const timeForEndGame = await fromCurrentTime(timeForPlay);
+
+
+    await planEndGame(timeForEndGame);
+
+
+    emitter.on('player:step', function (data) {
+        console.log("Hello all!", data);
+        makeMove('payload');
+
+    });
+
+    emitter.on('game:start', function (data) {
+        console.log("Game started!", data);
+    });
+
+    emitter.on('game:end', function (data) {
+        console.log("Game ended!", data);
+    });
+
+    return;
+
+
+    planStartGame(8);
     // Устанавливается начало игры
 
     // Установить чья очередь
@@ -51,15 +89,7 @@ server.listen(port, hostname, async () => {
 
 
 
-    emitter.on('player:step', function (data) {
-        console.log("Hello all!", data);
-        makeMove('payload');
 
-    });
-
-    emitter.on('game:end', function (data) {
-        console.log("Привет!", data);
-    });
 
 
 
